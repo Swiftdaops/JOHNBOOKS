@@ -3,17 +3,15 @@ import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import BooksPage from "./components/books/BooksPage";
 import Footer from "./components/Footer";
-import { ThemeProvider } from "./components/theme-provider";
+// ThemeProvider removed — app uses a single visual theme
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900 dark:text-white">
-        <Navbar />
-        <BooksPage />
-        <Footer />
-      </div>
-    </ThemeProvider>
+    <div className="flex min-h-screen flex-col bg-slate-50 text-stone-900">
+      <Navbar />
+      <BooksPage />
+      <Footer />
+    </div>
   );
 }
 

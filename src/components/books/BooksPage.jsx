@@ -3,42 +3,21 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import SearchBar from "../SearchBar";
 import BookCard from "../BookCard";
-import { useTheme } from "../theme-provider";
+// Theme removed — page uses a single visual theme
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
-  const { theme } = useTheme();
-  const [resolvedTheme, setResolvedTheme] = useState("light");
-
-  useEffect(() => {
-    if (theme === "system") {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      const update = (e) => setResolvedTheme(e.matches ? "dark" : "light");
-      setResolvedTheme(mq.matches ? "dark" : "light");
-      if (mq.addEventListener) mq.addEventListener("change", update);
-      else mq.addListener(update);
-      return () => {
-        if (mq.removeEventListener) mq.removeEventListener("change", update);
-        else mq.removeListener(update);
-      };
-    }
-
-    setResolvedTheme(theme);
-  }, [theme]);
+  // no theme provider — always render the light styles
 
   // Use flex-1 so the page content fills available space and the footer
   // stays at the bottom without large built-in padding. Reduce bottom
   // padding to avoid big gaps under the footer.
   const base = "mx-auto flex-1 flex w-full flex-col px-4 pb-6";
-  const themeClass = resolvedTheme === "dark" ? "dark text-white" : "light text-stone-950";
+  const themeClass = "light text-stone-950";
 
-  const heroSectionClass = resolvedTheme === "dark"
-    ? "dark text-white mx-auto my-6 max-w-5xl text-center sm:text-left rounded-3xl overflow-hidden"
-    : "light text-stone-950 mx-auto my-6 max-w-5xl text-center sm:text-left rounded-3xl overflow-hidden";
+  const heroSectionClass = "light text-stone-950 mx-auto my-6 max-w-5xl text-center sm:text-left rounded-3xl overflow-hidden";
 
-  const heroPanelClass = resolvedTheme === "dark"
-    ? "relative overflow-hidden rounded-4xl px-4 py-4 shadow-sm sm:px-6 sm:py-5 darkglass"
-    : "relative overflow-hidden rounded-4xl px-4 py-4 shadow-sm sm:px-6 sm:py-5 card";
+  const heroPanelClass = "relative overflow-hidden rounded-4xl px-4 py-4 shadow-sm sm:px-6 sm:py-5 card";
 
   return (
     <main className={`${base} ${themeClass}`}>
