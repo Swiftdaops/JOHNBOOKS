@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Glassmorphism card effect */
+.card {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(242, 234, 219, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+
+.darkglass {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(208, 2, 27, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.125);
+}
+
+.dark {
+  background: #200122;
+  background: linear-gradient(90deg, rgba(32, 1, 34, 1) 0%, rgba(232, 132, 132, 1) 50%, rgba(111, 0, 0, 1) 100%);
+}
+.light {
+  background: #EACDA3;
+  background: linear-gradient(90deg, rgba(234, 205, 163, 1) 0%, rgba(235, 174, 89, 1) 100%);
+}
+
+.noto-sans {
+  font-family: "Noto Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+/* Apply Noto Sans globally so all UI (nav, headers, body) uses it */
+html, body, #root, .app {
+  font-family: "Noto Sans", sans-serif;
+}
+
+/* Smooth theme transition helper
+   Applied briefly to `document.documentElement` when the theme changes.
+*/
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 350ms ease, color 350ms ease, border-color 350ms ease, box-shadow 350ms ease, fill 350ms ease, stroke 350ms ease;
+}
