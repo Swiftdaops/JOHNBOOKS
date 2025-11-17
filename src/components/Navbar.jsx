@@ -46,7 +46,7 @@ return (
                     className="h-8 w-8 object-contain rounded"
                 />
                 <span className="text-base  font-bold tracking-tight">
-                    JOHNBOOKS
+                    EBOOKS
                 </span>
             </div>
 

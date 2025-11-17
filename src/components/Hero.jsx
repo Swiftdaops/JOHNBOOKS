@@ -27,7 +27,7 @@ function Hero() {
               transition={{ delay: 0.1 }}
               className="text-xl font-semibold leading-tight tracking-tight sm:text-2xl"
             >
-              Find Rare Books
+              Find Rare Books 
               <span className="bg-linear-to-r bg-clip-text text-transparent">
                 {' '}on your phone
               </span>
