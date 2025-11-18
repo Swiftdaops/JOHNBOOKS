@@ -18,7 +18,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center bg-gradient-to-b from-slate-100 to-slate-50">
+    <div className="min-h-screen grid place-items-center bg-linear-to-b from-slate-100 to-slate-50">
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}

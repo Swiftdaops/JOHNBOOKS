@@ -19,14 +19,12 @@ return (
                     alt="JOHNBOOKS logo"
                     className="h-8 w-8 object-contain rounded"
                 />
-                <span className="text-base font-bold tracking-tight hidden sm:inline">
+                <span className="text-base  font-bold tracking-tight">
                     EBOOKS
                 </span>
             </div>
 
-            <div className="flex items-center gap-3">
-                {/* dark mode toggle removed */}
-            </div>
+          
         </div>
 
         

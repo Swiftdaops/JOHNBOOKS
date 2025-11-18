@@ -82,20 +82,23 @@ function SearchBar({ onResults }) {
             exit={{ opacity: 0, y: 4 }}
             className="absolute z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-xl border bg-white/95 shadow-lg"
           >
-            <ul className="divide-y text-xs">
-              {suggestions.slice(0, 6).map((book) => (
-                <li
-                  key={book.id}
-                  className="px-3 py-2"
-                >
-                  <div className="font-medium">{getBookTitle(book)}</div>
-                  {getBookAuthor(book) && (
-                    <div className="text-[11px] ">
-                      {getBookAuthor(book)}
-                    </div>
-                  )}
-                </li>
-              ))}
+              <ul className="divide-y text-xs">
+              {suggestions.slice(0, 6).map((book, idx) => {
+                const key = book._id || book.id || book.cover_i || `${getBookTitle(book) || 'book'}-${idx}`;
+                return (
+                  <li
+                    key={key}
+                    className="px-3 py-2"
+                  >
+                    <div className="font-medium">{getBookTitle(book)}</div>
+                    {getBookAuthor(book) && (
+                      <div className="text-[11px] ">
+                        {getBookAuthor(book)}
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </motion.div>
         )}

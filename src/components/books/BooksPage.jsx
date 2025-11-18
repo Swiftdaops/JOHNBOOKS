@@ -106,11 +106,12 @@ function BooksPage() {
         ) : (
           <motion.div
             layout
-            className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4"
+            className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
           >
-            {books.map((book, i) => (
-              <BookCard key={book.id} book={book} index={i} />
-            ))}
+            {books.map((book, i) => {
+              const key = book._id || book.id || book.cover_i || i;
+              return <BookCard key={key} book={book} index={i} />;
+            })}
           </motion.div>
         )}
       </section>

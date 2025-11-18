@@ -20,12 +20,6 @@ export default function AdminSidebar() {
         <NavLink to="/admin/products" className={linkClass}>
           Products
         </NavLink>
-        <NavLink to="/admin/orders" className={linkClass}>
-          Orders
-        </NavLink>
-        <NavLink to="/admin/customers" className={linkClass}>
-          Customers
-        </NavLink>
       </nav>
     </aside>
   )
