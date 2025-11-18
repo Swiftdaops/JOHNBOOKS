@@ -191,8 +191,8 @@ function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
   }
 
   return (
-    <div className="fixed inset-0 grid place-items-center bg-black/40">
-      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-lg p-6 rounded-xl glass">
+    <div className="fixed inset-0 grid place-items-center bg-black/40 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-lg p-6 rounded-xl glass bg-white/80">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">{mode === 'add' ? 'Add Book' : 'Edit Book'}</h3>
           <button onClick={onClose} className="text-slate-600">Close</button>
