@@ -14,6 +14,18 @@ function BookCard({ book, index }) {
   const year = book.year;
   const buyUrl = buildWhatsAppOrderUrl(book);
 
+  const formatPrice = (p) => {
+    if (p == null || p === '') return 'Price not available'
+    if (typeof p === 'object') {
+      const amt = p.amount ?? p.value ?? p.price ?? ''
+      const cur = p.currency ?? p.currencyCode ?? '₦'
+      return `${cur}${amt}`
+    }
+    return `₦${p}`
+  }
+
+  const priceText = formatPrice(book?.price)
+
   React.useEffect(() => {
     // Helpful debug: log resolved cover URL and identifying info when card renders
     console.debug('BookCard cover:', { id: book?.id ?? book?._id, title, cover });
@@ -58,7 +70,7 @@ function BookCard({ book, index }) {
 
         <CardFooter className="px-3 pb-3 pt-1 flex items-center gap-3">
           <div className="flex-1">
-            <div className="text-sm font-bold">{book.priceLabel ?? '₦4,000'}</div>
+            <div className="text-sm font-bold">{priceText}</div>
             <div className="text-[11px] text-gray-500">Rare pick</div>
           </div>
 
