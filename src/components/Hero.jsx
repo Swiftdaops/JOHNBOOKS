@@ -40,7 +40,7 @@ function Hero() {
               transition={{ delay: 0.15 }}
               className="max-w-md text-[12px] leading-relaxed"
             >
-              Here at JohnBooks we only sell unique, hard-to-find titles approved and used by many universities across Nigeria.
+              Here at EBooks we only sell unique, hard-to-find titles approved and used by many universities across Nigeria.
             </motion.p>
 
             
