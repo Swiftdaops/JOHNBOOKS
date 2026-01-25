@@ -5,8 +5,10 @@ import AdminHeader from '../../components/admin/AdminHeader'
 import AdminSidebar from '../../components/admin/AdminSidebar'
 import { useForm } from 'react-hook-form'
 import { motion } from 'framer-motion'
+import Modal from '../../components/ui/modal'
+import { api as http } from '../../api/httpClient'
 
-function EbookCard({ book, onEdit, onDelete }) {
+function EbookCard({ book, onEdit, onDelete, onView, onLike }) {
   const formatPrice = (p) => {
     if (p && typeof p === 'object') {
       const amt = p.amount ?? p.value ?? ''
@@ -19,16 +21,17 @@ function EbookCard({ book, onEdit, onDelete }) {
   const cover = book?.coverImage?.url || book?.coverUrl || placeholderImg
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
     console.debug('EbookCard cover resolved:', { id: book?._id || book?.id, cover })
   }, [cover, book])
 
   return (
-    <div className="p-4 rounded-xl glass shadow-sm flex flex-col">
-      <div className="w-full">
+    <div className="p-4 rounded-lg bg-white shadow-sm flex flex-col">
+      <div className="w-full mb-3">
         <img
           src={cover}
           alt={book.title}
-          className="w-full h-80 sm:h-96 md:h-[520px] object-contain rounded"
+          className="w-full h-64 sm:h-44 object-cover rounded-md"
           loading="lazy"
           onError={(e) => {
             e.currentTarget.onerror = null
@@ -37,14 +40,16 @@ function EbookCard({ book, onEdit, onDelete }) {
         />
       </div>
 
-      <h3 className="mt-3 text-lg font-semibold line-clamp-2">{book.title}</h3>
-      <div className="text-sm text-slate-600">{book.author}</div>
+      <h3 className="mt-1 text-md font-semibold line-clamp-2">{book.title}</h3>
+      <div className="text-sm text-slate-500">{book.author}</div>
 
       <div className="mt-3 flex items-center justify-between">
-        <div className="font-bold">{formatPrice(book.price)}</div>
-        <div className="flex gap-2">
-          <button onClick={() => onEdit(book)} className="px-2 py-1 bg-yellow-400 rounded">Edit</button>
-          <button onClick={() => onDelete(book._id)} className="px-2 py-1 bg-red-500 text-white rounded">Delete</button>
+        <div className="font-semibold text-sm text-slate-700">{formatPrice(book.price)}</div>
+        <div className="flex gap-2 items-center">
+          <button onClick={() => onLike(book)} className="text-sm text-orange-600 px-2 py-1 rounded border border-orange-100 bg-orange-50">♥ {book.likes || 0}</button>
+          <button onClick={() => onView(book)} className="px-3 py-1 text-sm rounded bg-orange-600 text-white">View</button>
+          <button onClick={() => onEdit(book)} className="px-3 py-1 text-sm rounded border">Edit</button>
+          <button onClick={() => onDelete(book._id)} className="px-3 py-1 text-sm rounded bg-red-500 text-white">Delete</button>
         </div>
       </div>
     </div>
@@ -64,6 +69,7 @@ export default function Products() {
   const closeModal = useAdminStore((s) => s.closeModal)
 
   const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState(null)
 
   const filteredEbooks = useMemo(() => {
     if (!query || !query.trim()) return ebooks || []
@@ -105,9 +111,25 @@ export default function Products() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredEbooks.map((b) => (
-              <EbookCard key={b._id || b.id} book={b} onEdit={(bk) => openEditModal(bk)} onDelete={handleDelete} />
+              <EbookCard
+                key={b._id || b.id}
+                book={b}
+                onEdit={(bk) => openEditModal(bk)}
+                onDelete={handleDelete}
+                onView={(bk) => setSelected(bk)}
+                onLike={async (bk) => {
+                  try {
+                    await http.post(`/api/ebooks/${bk._id}/like`)
+                    // optimistic UI: update local list
+                    bk.likes = (bk.likes || 0) + 1
+                    setSelected(bk)
+                  } catch (err) {
+                    console.error('Like failed', err)
+                  }
+                }}
+              />
             ))}
           </div>
         </main>
@@ -122,6 +144,23 @@ export default function Products() {
           onUpdate={updateEbook}
         />
       )}
+
+      <Modal open={!!selected} onClose={() => setSelected(null)} title={selected?.title || 'Book'}>
+        {selected && (
+          <div className="flex flex-col md:flex-row gap-4">
+            <img src={selected.coverImage?.url} alt="cover" className="w-full md:w-48 h-64 object-cover rounded" />
+            <div>
+              <h3 className="text-lg font-semibold">{selected.title}</h3>
+              <p className="text-sm text-slate-600">By {selected.author}</p>
+              <p className="mt-2 text-sm text-slate-700">{selected.description}</p>
+              <div className="mt-4 flex items-center gap-4">
+                <div className="text-sm text-orange-600 font-semibold">Likes: {selected.likes || 0}</div>
+                <div className="text-sm font-semibold">Price: {selected.price?.amount ?? selected.price}</div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
 
       <style>{`.addbooks{position:fixed;right:18px;bottom:18px}`}</style>
     </div>
