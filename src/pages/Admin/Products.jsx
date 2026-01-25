@@ -92,9 +92,10 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
-      <div className="flex flex-col sm:flex-row gap-6 p-4 sm:p-6">
-        <AdminSidebar />
-        <main className="flex-1 w-full">
+      <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          <AdminSidebar />
+          <main className="flex-1 w-full h-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Products</h2>
             <div className="flex items-center gap-3">
