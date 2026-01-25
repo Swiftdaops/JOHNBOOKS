@@ -11,7 +11,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    // proxy removed: OpenLibrary requests are no longer proxied in dev
-  },
+
 })

@@ -5,6 +5,7 @@ import BooksPage from './components/books/BooksPage'
 import Footer from './components/Footer'
 import RequireAdmin from './components/admin/RequireAdmin'
 import AdminLogin from './pages/Admin/Login'
+import AdminSignup from './pages/Admin/Signup'
 import AdminDashboard from './pages/Admin/Dashboard'
 import AdminProducts from './pages/Admin/Products'
 
@@ -24,6 +25,7 @@ function App() {
       <Routes>
         <Route path="/" element={<PublicLayout />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/signup" element={<AdminSignup />} />
 
         <Route path="/admin" element={<RequireAdmin />}>
           <Route index element={<AdminDashboard />} />
