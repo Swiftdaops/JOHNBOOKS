@@ -8,6 +8,92 @@ import { motion } from 'framer-motion'
 import Modal from '../../components/ui/modal'
 import { api as http } from '../../api/httpClient'
 
+// Move EbookModal above Products so it's available when Products is evaluated
+function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
+  const { register, handleSubmit, reset } = useForm()
+
+  React.useEffect(() => {
+    if (mode === 'edit' && book) {
+      const priceVal =
+        book && typeof book.price === 'object'
+          ? book.price.amount ?? book.price.value ?? ''
+          : book.price
+
+      const defaults = {
+        title: book.title ?? '',
+        author: book.author ?? '',
+        description: book.description ?? '',
+        price: priceVal ?? '',
+        coverUrl: book.coverUrl || '',
+      }
+
+      const setDefaultsWithCover = async () => {
+        if (book.coverUrl) {
+          try {
+            const res = await fetch(book.coverUrl)
+            if (!res.ok) throw new Error('Failed to fetch cover image')
+            const blob = await res.blob()
+            const ext = (blob.type && blob.type.split('/')[1]) || 'jpg'
+            const filename = (book.title ? book.title.replace(/\s+/g, '_') : 'cover') + '.' + ext
+            const file = new File([blob], filename, { type: blob.type })
+            reset({ ...defaults, coverImage: [file], coverUrl: book.coverUrl || '' })
+            return
+          } catch (err) {
+            // If fetch fails, fall back to resetting without cover file
+          }
+        }
+        reset({ ...defaults, coverImage: [], coverUrl: book.coverUrl || '' })
+      }
+
+      setDefaultsWithCover()
+    } else {
+      reset({ title: '', author: '', description: '', price: '', coverImage: [], coverUrl: '' })
+    }
+  }, [mode, book, reset])
+
+  const submit = async (vals) => {
+    const fd = new FormData()
+    fd.append('title', vals.title)
+    fd.append('author', vals.author)
+    fd.append('description', vals.description)
+    fd.append('price', vals.price)
+    const file = vals.coverImage && vals.coverImage[0]
+    if (file) {
+      fd.append('coverImage', file)
+    } else if (vals.coverUrl) {
+      fd.append('coverImageUrl', vals.coverUrl)
+    }
+
+    if (mode === 'add') {
+      await onCreate(fd)
+    } else if (mode === 'edit') {
+      await onUpdate(book._id, fd)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 grid place-items-center bg-black/40 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-lg p-6 rounded-xl glass bg-white/80">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold">{mode === 'add' ? 'Add Book' : 'Edit Book'}</h3>
+          <button onClick={onClose} className="text-slate-600">Close</button>
+        </div>
+        <form onSubmit={handleSubmit(submit)} className="space-y-3">
+          <input className="w-full px-3 py-2 rounded border" placeholder="Title" {...register('title', { required: true })} />
+          <input className="w-full px-3 py-2 rounded border" placeholder="Author" {...register('author', { required: true })} />
+          <textarea className="w-full px-3 py-2 rounded border" placeholder="Description" {...register('description')}></textarea>
+          <input className="w-full px-3 py-2 rounded border" placeholder="Price" {...register('price', { required: true })} />
+          <input type="file" {...register('coverImage')} />
+          <div className="flex gap-2 justify-end">
+            <button type="button" onClick={onClose} className="px-3 py-2 rounded">Cancel</button>
+            <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white">{mode === 'add' ? 'Create' : 'Update'}</button>
+          </div>
+        </form>
+      </motion.div>
+    </div>
+  )
+}
+
 function EbookCard({ book, onEdit, onDelete, onView, onLike }) {
   const formatPrice = (p) => {
     if (p && typeof p === 'object') {
@@ -92,7 +178,7 @@ export default function Products() {
   return (
     <div className="min-h-screen bg-slate-50">
       <AdminHeader />
-      <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col md:flex-row gap-6">
           <AdminSidebar />
           <main className="flex-1 w-full h-full">
@@ -134,7 +220,8 @@ export default function Products() {
             ))}
           </div>
         </main>
-      </div>
+          </div>
+        </div>
 
       {modalOpen && (
         <EbookModal
@@ -168,87 +255,4 @@ export default function Products() {
   )
 }
 
-function EbookModal({ mode, book, onClose, onCreate, onUpdate }) {
-  const { register, handleSubmit, reset } = useForm()
 
-    React.useEffect(() => {
-    if (mode === 'edit' && book) {
-      const priceVal =
-        book && typeof book.price === 'object'
-        ? (book.price.amount ?? book.price.value ?? '')
-        : book.price
-
-      const defaults = {
-        title: book.title ?? '',
-        author: book.author ?? '',
-        description: book.description ?? '',
-        price: priceVal ?? '',
-        coverUrl: book.coverUrl || ''
-      }
-
-      const setDefaultsWithCover = async () => {
-        if (book.coverUrl) {
-        try {
-          const res = await fetch(book.coverUrl)
-          if (!res.ok) throw new Error('Failed to fetch cover image')
-          const blob = await res.blob()
-          const ext = (blob.type && blob.type.split('/')[1]) || 'jpg'
-          const filename = (book.title ? book.title.replace(/\s+/g, '_') : 'cover') + '.' + ext
-          const file = new File([blob], filename, { type: blob.type })
-          reset({ ...defaults, coverImage: [file], coverUrl: book.coverUrl || '' })
-          return
-        } catch (err) {
-          // If fetch fails, fall back to resetting without cover file
-        }
-        }
-        reset({ ...defaults, coverImage: [], coverUrl: book.coverUrl || '' })
-      }
-
-      setDefaultsWithCover()
-    } else {
-      reset({ title: '', author: '', description: '', price: '', coverImage: [], coverUrl: '' })
-    }
-  }, [mode, book, reset])
-
-  const submit = async (vals) => {
-    const fd = new FormData()
-    fd.append('title', vals.title)
-    fd.append('author', vals.author)
-    fd.append('description', vals.description)
-    fd.append('price', vals.price)
-    const file = vals.coverImage && vals.coverImage[0]
-    if (file) {
-      fd.append('coverImage', file)
-    } else if (vals.coverUrl) {
-      fd.append('coverImageUrl', vals.coverUrl)
-    }
-
-    if (mode === 'add') {
-      await onCreate(fd)
-    } else if (mode === 'edit') {
-      await onUpdate(book._id, fd)
-    }
-  }
-
-  return (
-    <div className="fixed inset-0 grid place-items-center bg-black/40 backdrop-blur-sm">
-      <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-lg p-6 rounded-xl glass bg-white/80">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">{mode === 'add' ? 'Add Book' : 'Edit Book'}</h3>
-          <button onClick={onClose} className="text-slate-600">Close</button>
-        </div>
-        <form onSubmit={handleSubmit(submit)} className="space-y-3">
-          <input className="w-full px-3 py-2 rounded border" placeholder="Title" {...register('title', { required: true })} />
-          <input className="w-full px-3 py-2 rounded border" placeholder="Author" {...register('author', { required: true })} />
-          <textarea className="w-full px-3 py-2 rounded border" placeholder="Description" {...register('description')}></textarea>
-          <input className="w-full px-3 py-2 rounded border" placeholder="Price" {...register('price', { required: true })} />
-          <input type="file" {...register('coverImage')} />
-          <div className="flex gap-2 justify-end">
-            <button type="button" onClick={onClose} className="px-3 py-2 rounded">Cancel</button>
-            <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white">{mode === 'add' ? 'Create' : 'Update'}</button>
-          </div>
-        </form>
-      </motion.div>
-    </div>
-  )
-}

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Card, CardHeader, CardContent, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
 import { getBookTitle, getBookAuthor, getCoverImage } from "../api/freebooksApi";
+import { api as http } from "../api/httpClient";
 import placeholderImg from "./books/logo.png";
 import { buildWhatsAppOrderUrl } from "../lib/utils/whatsapp";
 
@@ -25,6 +26,8 @@ function BookCard({ book, index }) {
   }
 
   const priceText = formatPrice(book?.price)
+  const [likes, setLikes] = React.useState(book?.likes || 0)
+  const [liking, setLiking] = React.useState(false)
 
   React.useEffect(() => {
     // Helpful debug: log resolved cover URL and identifying info when card renders
@@ -75,14 +78,35 @@ function BookCard({ book, index }) {
           </div>
 
           <div className="w-1/2">
-            <Button
-              asChild
-              className="h-12 w-full rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
-            >
-              <a href={buyUrl} target="_blank" rel="noopener noreferrer">
-                Buy on WhatsApp
-              </a>
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                asChild
+                className="h-12 rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
+              >
+                <a href={buyUrl} target="_blank" rel="noopener noreferrer">
+                  Buy on WhatsApp
+                </a>
+              </Button>
+
+              <button
+                onClick={async () => {
+                  if (liking) return
+                  setLiking(true)
+                  try {
+                    await http.post(`/api/ebooks/${book._id || book.id}/like`)
+                    setLikes((l) => l + 1)
+                  } catch (err) {
+                    console.error('Like failed', err)
+                  } finally {
+                    setLiking(false)
+                  }
+                }}
+                aria-label="Like book"
+                className="px-3 py-2 text-sm rounded bg-orange-50 text-orange-600 border border-orange-100"
+              >
+                ♥ {liking ? '...' : likes}
+              </button>
+            </div>
           </div>
         </CardFooter>
       </Card>
