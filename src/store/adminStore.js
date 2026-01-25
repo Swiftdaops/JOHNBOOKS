@@ -20,7 +20,13 @@ const useAdminStore = create((set, get) => ({
   login: async (username, password) => {
     try {
       set({ authLoading: true })
-      await http.post('/api/admin/login', { username, password })
+      const resp = await http.post('/api/admin/login', { username, password })
+      const token = resp?.data?.token
+      if (token) {
+        http.defaults.headers.common['Authorization'] = `Bearer ${token}`
+        try { localStorage.setItem('admin_token', token) } catch (e) {}
+      }
+
       const { data } = await http.get('/api/admin/me')
       set({ admin: data, authLoading: false })
       toast.success('Logged in')
@@ -39,6 +45,8 @@ const useAdminStore = create((set, get) => ({
     } catch (err) {
       // ignore
     }
+    try { delete http.defaults.headers.common['Authorization'] } catch(e) {}
+    try { localStorage.removeItem('admin_token') } catch (e) {}
     set({ admin: null })
     toast.success('Logged out')
   },
@@ -46,6 +54,13 @@ const useAdminStore = create((set, get) => ({
   checkSession: async () => {
     try {
       set({ authLoading: true })
+      // If a token was previously saved (fallback for mobile), set it on the client
+      try {
+        const saved = localStorage.getItem('admin_token')
+        if (saved && !http.defaults.headers.common['Authorization']) {
+          http.defaults.headers.common['Authorization'] = `Bearer ${saved}`
+        }
+      } catch (e) {}
       const { data } = await http.get('/api/admin/me')
       set({ admin: data, authLoading: false })
       return data
