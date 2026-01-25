@@ -7,6 +7,7 @@ import Modal from '../../components/ui/modal'
 export default function Dashboard() {
   const [top, setTop] = useState([])
   const [loading, setLoading] = useState(false)
+  const [totalBooks, setTotalBooks] = useState(0)
   const [selected, setSelected] = useState(null)
 
   useEffect(() => {
@@ -16,8 +17,12 @@ export default function Dashboard() {
   const loadTop = async () => {
     try {
       setLoading(true)
-      const { data } = await http.get('/api/ebooks/top?limit=6')
-      setTop(data)
+      const [{ data: topData }, { data: stats }] = await Promise.all([
+        http.get('/api/ebooks/top?limit=6'),
+        http.get('/api/ebooks/stats').catch(() => ({ data: { totalBooks: 0 } })),
+      ])
+      setTop(topData)
+      setTotalBooks(stats.totalBooks || stats.data?.totalBooks || 0)
     } catch (err) {
       console.error('Failed to load top liked ebooks', err)
     } finally {
@@ -34,7 +39,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="col-span-1 p-6 rounded-xl bg-white shadow-sm border border-orange-50">
               <h3 className="text-sm text-slate-500">Total Books</h3>
-              <div className="text-3xl font-bold">—</div>
+              <div className="text-3xl font-bold">{totalBooks}</div>
               <p className="mt-2 text-sm text-slate-500">Quick overview and stats will appear here.</p>
             </div>
 
