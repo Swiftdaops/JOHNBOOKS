@@ -8,6 +8,7 @@ import AdminLogin from './pages/Admin/Login'
 import AdminSignup from './pages/Admin/Signup'
 import AdminDashboard from './pages/Admin/Dashboard'
 import AdminProducts from './pages/Admin/Products'
+import BuyPage from './pages/BuyPage'
 
 function PublicLayout() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="orders" element={<div className="p-6">Orders (coming soon)</div>} />
           <Route path="customers" element={<div className="p-6">Customers (coming soon)</div>} />
         </Route>
+        <Route path="/buy/:id" element={<BuyPage />} />
       </Routes>
     </BrowserRouter>
   )

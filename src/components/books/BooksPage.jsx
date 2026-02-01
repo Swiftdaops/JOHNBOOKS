@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import SearchBar from "../SearchBar";
 import BookCard from "../BookCard";
+import Carousel from "../Carousel";
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
@@ -91,6 +92,11 @@ function BooksPage() {
           >
             <SearchBar onResults={setBooks} />
           </motion.div>
+        </section>
+
+        {/* Carousel showing top / sold books */}
+        <section>
+          <Carousel />
         </section>
 
         

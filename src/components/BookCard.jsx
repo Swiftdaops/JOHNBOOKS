@@ -6,14 +6,14 @@ import { Button } from "./ui/button";
 import { getBookTitle, getBookAuthor, getCoverImage } from "../api/freebooksApi";
 import { api as http } from "../api/httpClient";
 import placeholderImg from "./books/logo.png";
-import { buildWhatsAppOrderUrl } from "../lib/utils/whatsapp";
+// navigation to the buy page
 
 function BookCard({ book, index }) {
   const title = getBookTitle(book);
   const author = getBookAuthor(book);
   const cover = getCoverImage(book);
   const year = book.year;
-  const buyUrl = buildWhatsAppOrderUrl(book);
+  const buyUrl = `/buy/${book._id || book.id}`;
 
   const formatPrice = (p) => {
     if (p == null || p === '') return 'Price not available'
@@ -81,10 +81,10 @@ function BookCard({ book, index }) {
             <div className="flex gap-2">
               <Button
                 asChild
-                className="h-12 rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
+                className="h-12 w-12 rounded-xl text-[14px] font-medium shadow-sm hover:bg-emerald-700 flex items-center justify-center text-green-950 border-2 border-red-950"
               >
-                <a href={buyUrl} target="_blank" rel="noopener noreferrer">
-                  Buy on WhatsApp
+                <a href={buyUrl}>
+                  Buy
                 </a>
               </Button>
 
