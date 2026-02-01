@@ -94,11 +94,6 @@ function BooksPage() {
           </motion.div>
         </section>
 
-        {/* Carousel showing top / sold books */}
-        <section>
-          <Carousel />
-        </section>
-
         
       <section className="flex-1">
         {books.length === 0 ? (
@@ -117,6 +112,10 @@ function BooksPage() {
             })}
           </motion.div>
         )}
+        {/* Carousel showing top / sold books */}
+        <section>
+          <Carousel />
+        </section>
       </section>
     </main>
   );
