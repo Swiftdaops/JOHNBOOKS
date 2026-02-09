@@ -8,6 +8,7 @@ export default function Login() {
   const { register, handleSubmit } = useForm()
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const login = useAdminStore((s) => s.login)
   const navigate = useNavigate()
   const location = useLocation()
@@ -15,10 +16,15 @@ export default function Login() {
   const from = location.state?.from?.pathname || '/admin'
 
   const onSubmit = async (vals) => {
-    setError('')
-    const ok = await login(vals.username, vals.password)
-    if (ok) return navigate(from, { replace: true })
-    setError('Invalid username or password')
+    try {
+      setError('')
+      setLoading(true)
+      const ok = await login(vals.username, vals.password)
+      if (ok) return navigate(from, { replace: true })
+      setError('Invalid username or password')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -65,7 +71,13 @@ export default function Login() {
 
           <div className="flex items-center justify-between">
             <div className="text-sm text-slate-500">Keep me signed in</div>
-            <button className="px-4 py-2 rounded-md bg-orange-600 text-white font-medium">Sign In</button>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`px-4 py-2 rounded-md text-white font-medium ${loading ? 'bg-orange-400 opacity-80' : 'bg-orange-600 hover:bg-orange-700'}`}
+            >
+              {loading ? 'Signing in…' : 'Sign In'}
+            </button>
           </div>
         </form>
       </motion.div>
