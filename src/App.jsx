@@ -34,7 +34,16 @@ function App() {
           <Route path="orders" element={<div className="p-6">Orders (coming soon)</div>} />
           <Route path="customers" element={<div className="p-6">Customers (coming soon)</div>} />
         </Route>
-        <Route path="/buy/:id" element={<BuyPage />} />
+        <Route
+          path="/buy/:id"
+          element={
+            <div className="flex min-h-screen flex-col bg-slate-50 text-stone-900">
+              <Navbar />
+              <BuyPage />
+              <Footer />
+            </div>
+          }
+        />
       </Routes>
     </BrowserRouter>
   )
