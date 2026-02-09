@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Smile } from 'lucide-react'
 import { api as http } from '../api/httpClient'
 import { getBookTitle, getCoverImage } from '../api/freebooksApi'
 import { buildWhatsAppPaymentConfirmationUrl } from '../lib/utils/whatsapp'
@@ -11,6 +12,7 @@ export default function BuyPage() {
   const [book, setBook] = React.useState(null)
   const [loading, setLoading] = React.useState(true)
   const [notFound, setNotFound] = React.useState(false)
+  const [paidAck, setPaidAck] = React.useState(false)
 
   React.useEffect(() => {
     let cancelled = false
@@ -36,7 +38,7 @@ export default function BuyPage() {
   }, [id])
 
   const adminAccount = import.meta.env.VITE_ADMIN_ACCOUNT || '0735508259'
-  const adminName = import.meta.env.VITE_ADMIN_NAME || 'Admin NameAnisiobi Gladys'
+  const adminName = import.meta.env.VITE_ADMIN_NAME || 'Admin Name: Anisiobi Gladys'
 
   const handlePaid = () => {
     const amt = book?.price
@@ -47,6 +49,9 @@ export default function BuyPage() {
     // Pass empty payer name to avoid including a placeholder name in the message
     const url = buildWhatsAppPaymentConfirmationUrl(book || { title: id }, '', amt)
     window.open(url, '_blank')
+    // show immediate acknowledgement UI
+    setPaidAck(true)
+    setTimeout(() => setPaidAck(false), 4000)
   }
 
   const title = book ? getBookTitle(book) : 'Book'
@@ -80,7 +85,12 @@ export default function BuyPage() {
         className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl p-6 sm:p-8 card"
       >
         {loading ? (
-          <div className="text-center text-stone-950">Loading book…</div>
+          <div className="flex flex-col items-center justify-center gap-4 py-10">
+            <div className="h-[340px] w-[220px] rounded-xl bg-gray-200 animate-pulse" />
+            <div className="w-48 h-6 bg-gray-200 rounded animate-pulse" />
+            <div className="w-36 h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="mt-4 text-sm text-stone-950">Loading book…</div>
+          </div>
         ) : notFound ? (
           <div className="text-center p-8 text-stone-950">
             <h3 className="text-lg font-semibold">Book not found</h3>
@@ -150,6 +160,16 @@ export default function BuyPage() {
                   I have paid
                 </button>
               </div>
+
+              {/* Paid acknowledgement */}
+              {paidAck && (
+                <div className="mt-4">
+                  <div className="mx-auto w-full max-w-xs rounded-lg bg-white text-black p-4 shadow-lg flex items-center gap-3 justify-center">
+                    <Smile className="h-6 w-6" />
+                    <div className="text-sm font-medium">Thank you 😊</div>
+                  </div>
+                </div>
+              )}
 
               <p className="text-xs text-stone-950 max-w-md">
                 After tapping “I have paid”, WhatsApp will open with a prepared
