@@ -17,7 +17,8 @@ export default function HomeBookCarousel({ limit = 6, interval = 4500 }) {
         const res = await http.get(`/api/ebooks/top?limit=${limit}`)
         if (mounted) setItems(res.data || [])
       } catch (e) {
-        console.error(e)
+        console.error('Failed to load carousel items', e?.response?.status, e?.message)
+        if (mounted) setItems([])
       }
     }
     load()

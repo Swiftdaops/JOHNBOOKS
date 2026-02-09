@@ -10,6 +10,7 @@ export default function BuyPage() {
   const { id } = useParams()
   const [book, setBook] = React.useState(null)
   const [loading, setLoading] = React.useState(true)
+  const [notFound, setNotFound] = React.useState(false)
 
   React.useEffect(() => {
     let cancelled = false
@@ -18,7 +19,12 @@ export default function BuyPage() {
         const res = await http.get(`/api/ebooks/${id}`)
         if (!cancelled) setBook(res.data)
       } catch (err) {
-        console.error('Failed to load book', err)
+        // If backend returns 404, show user-friendly message
+        if (err && err.response && err.response.status === 404) {
+          if (!cancelled) setNotFound(true)
+        } else {
+          console.error('Failed to load book', err)
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -56,6 +62,11 @@ export default function BuyPage() {
       >
         {loading ? (
           <div className="text-center text-stone-950">Loading book…</div>
+        ) : notFound ? (
+          <div className="text-center p-8 text-stone-950">
+            <h3 className="text-lg font-semibold">Book not found</h3>
+            <p className="text-sm mt-2">The requested book does not exist or has been removed.</p>
+          </div>
         ) : (
           <div className="grid gap-8 sm:grid-cols-[240px_1fr]">
             {/* Book */}
