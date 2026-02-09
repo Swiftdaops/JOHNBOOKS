@@ -44,7 +44,8 @@ export default function BuyPage() {
         ? book.price.amount ?? book.price.value ?? book.price.price
         : book.price
       : ''
-    const url = buildWhatsAppPaymentConfirmationUrl(book || { title: id }, '{Your Name}', amt)
+    // Pass empty payer name to avoid including a placeholder name in the message
+    const url = buildWhatsAppPaymentConfirmationUrl(book || { title: id }, '', amt)
     window.open(url, '_blank')
   }
 

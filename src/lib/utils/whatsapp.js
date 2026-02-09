@@ -16,7 +16,7 @@ export function buildWhatsAppOrderUrl(book) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
 }
 
-export function buildWhatsAppPaymentConfirmationUrl(book, payerName = '{Your Name}', amount) {
+export function buildWhatsAppPaymentConfirmationUrl(book, payerName = '', amount) {
   const title = getBookTitle(book);
 
   // resolve amount: prefer explicit `amount` argument, else try book.price
@@ -31,10 +31,13 @@ export function buildWhatsAppPaymentConfirmationUrl(book, payerName = '{Your Nam
     }
   }
 
-  const cleanName = (payerName || '{Your Name}').trim() || '{Your Name}';
+  const cleanName = (payerName || '').trim();
   const amountText = amt === '' ? '₦{Amount}' : (typeof amt === 'number' ? `₦${amt}` : `₦${amt}`);
 
-  const message = `Hello 👋\n\nMy name is ${cleanName}.\n\nI have completed payment of ${amountText} for the book "${title}".\n\nPlease confirm my payment. I have attached my proof of payment here.\n\nThank you.`;
+  // Only include the payer name line if a non-empty name was provided
+  const nameLine = cleanName ? `My name is ${cleanName}.\n\n` : '';
+
+  const message = `Hello 👋\n\n${nameLine}I have completed payment of ${amountText} for the book "${title}".\n\nPlease confirm my payment. I have attached my proof of payment here.\n\nThank you.`;
 
   const encoded = encodeURIComponent(message);
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
