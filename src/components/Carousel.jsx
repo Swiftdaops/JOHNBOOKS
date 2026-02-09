@@ -93,6 +93,7 @@ export default function HomeBookCarousel({ limit = 6, interval = 4500 }) {
                   <div className="mt-4 flex items-center justify-center gap-3">
                     <Link
                       to={`/buy/${current._id || current.id}`}
+                      state={{ scrollToBuy: true }}
                       className="px-5 py-2 rounded-full font-medium shadow hover:bg-emerald-600 transition"
                     >
                       Buy Now

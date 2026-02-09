@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { api as http } from '../api/httpClient'
 import { getBookTitle, getCoverImage } from '../api/freebooksApi'
@@ -51,10 +51,28 @@ export default function BuyPage() {
   const title = book ? getBookTitle(book) : 'Book'
   const cover = book ? getCoverImage(book) : null
 
+  const location = useLocation()
+
+  React.useEffect(() => {
+    if (location?.state?.scrollToBuy) {
+      const tryScroll = () => {
+        const el = document.getElementById('buy-card')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          // retry shortly until element is mounted
+          setTimeout(tryScroll, 50)
+        }
+      }
+      tryScroll()
+    }
+  }, [location])
+
   return (
     <div className="w-full px-0 py-10 space-y-14 light text-stone-950">
       {/* Buy Card */}
       <motion.div
+        id="buy-card"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
