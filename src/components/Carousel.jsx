@@ -34,7 +34,21 @@ export default function HomeBookCarousel({ limit = 6, interval = 4500 }) {
     return () => clearInterval(t)
   }, [paused, items, interval])
 
-  if (!items.length) return null
+  if (!items.length)
+    return (
+      <section className="relative mx-auto max-w-5xl px-4 light py-10 text-stone-900">
+        <div className="relative overflow-hidden rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl p-8">
+          <div className="flex flex-col items-center gap-6 py-12">
+            <div className="h-[420px] w-[280px] rounded-xl bg-white/20 backdrop-blur animate-pulse" />
+            <div className="w-[320px]">
+              <div className="h-5 bg-white/20 rounded mb-2 animate-pulse" />
+              <div className="h-4 bg-white/10 rounded mb-2 animate-pulse" />
+              <div className="h-3 bg-white/10 rounded w-2/3 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </section>
+    )
 
   const current = items[index]
   const cover = getCoverImage(current)
